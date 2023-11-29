@@ -18,8 +18,8 @@ int main() {
     wrefresh(win);
 
     while ((ch = getch()) != KEY_F(1)) {
-        wborder(win, ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ');
-        wrefresh(win);
+        clear();
+        refresh();
         delwin(win);
         win = newwin(++height, ++width, starty, startx);
         wborder(win, '|', '|', '-', '-', '+', '+', '+', '+');
