@@ -1,31 +1,23 @@
-#include <ncurses.h>
+#include "Engine.h"
+#include "Single.h"
+#include "GameBoard.h"
+#include "metadata.h"
+#include "PeriodicMovement.h"
+#include "Rectangle.h"
 
-int main() {
-    int startx = 0, starty = 1, width = 80, height = 22;
-    int ch;
-    WINDOW *win;
+#include <iostream>
 
-    initscr();
-    cbreak();
+int main() { 
+  Engine e = Engine();
+  Status s1{"Lives", 10};
+  FullRectangle fr{1, 1, 0, 3, 4, '#'}; 
 
-    keypad(stdscr, TRUE);
+  PeriodicMovement frmove(4, 1, 1, 0);
+  fr.setMovement(&frmove);
 
-    printw("Press F1 to exit");
-    refresh();
-
-    win = newwin(height, width, starty, startx);
-    wborder(win, '|', '|', '-', '-', '+', '+', '+', '+');
-    wrefresh(win);
-
-    while ((ch = getch()) != KEY_F(1)) {
-        clear();
-        refresh();
-        delwin(win);
-        win = newwin(++height, ++width, starty, startx);
-        wborder(win, '|', '|', '-', '-', '+', '+', '+', '+');
-        wrefresh(win);
-    }
-
-    endwin();
-    return 0;
+  GameBoard gb = GameBoard();
+  e.addGameBoard(&gb);
+  e.addItem(&fr);
+  e.addStat(s1);
+  e.go();
 }
