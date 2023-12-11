@@ -1,40 +1,39 @@
 #include "Item.h"
 #include "PeriodicMovement.h"
 
-Item::Item(int x, int y, int z): x{x}, y{y}, z{z}, movement{nullptr} {}
+Item::Item(int x, int y, int z): x{x}, y{y}, z{z}, movement{PeriodicMovement{0, 0, 0, 0}} {}
 
-Item::Item(int x, int y, int z, PeriodicMovement *pm): x{x}, y{y}, z{z}, movement{pm} {}
+Item::Item(int x, int y, int z, PeriodicMovement &pm): x{x}, y{y}, z{z}, movement{pm} {}
 
 ErrorCode Item::notify(Subject<Info, State> &whoFrom) { 
   //draw(whoFrom.getBoard()); 
   return ErrorCode::Success;
 }
 
-ErrorCode Item::setMovement(PeriodicMovement *pm) { 
+ErrorCode Item::setMovement(PeriodicMovement &pm) { 
   movement = pm;
   return ErrorCode::Success;
 }
 
-ErrorCode Item::doMovement() {
-  if (movement) {
-    int cx = movement->getx();
-    int cy = movement->gety();
-    int cz = movement->getz();
-    // Collision logic
-    if (x == 79 && cx > 0) movement->reversex();
-    if (x == 1 && cx < 0) movement->reversex();
-    if (y == 24 && cy > 0) movement->reversey();
-    if (y == 0 && cy < 0) movement->reversey();
-
-    x += movement->getx(); 
-    y += movement->gety();
-    z += movement->getz();
-  } else return ErrorCode::NoMovement;
-  return ErrorCode::Success;
-}
+PeriodicMovement &Item::getMovement() { return movement; }
 
 int Item::getX() const { return x; }
 
 int Item::getY() const { return y; }
 
 int Item::getZ() const { return z; }
+
+ErrorCode Item::addX(int i) {
+  x += i;
+  return ErrorCode::Success; 
+}
+
+ErrorCode Item::addY(int i) {
+  y += i;
+  return ErrorCode::Success; 
+}
+
+ErrorCode Item::addZ(int i) {
+  z += i;
+  return ErrorCode::Success; 
+}

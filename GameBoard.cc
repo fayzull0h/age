@@ -35,6 +35,7 @@ ErrorCode GameBoard::drawBoard(Engine *eng) {
       mvprintw(25+i, 0, "%s: %d", stats[i].status.c_str(), stats[i].value); 
     }
   }
+  wrefresh(Board);
   return ErrorCode::Success;
 }
 

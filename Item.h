@@ -5,22 +5,25 @@
 #include "observer.h"
 #include <vector>
 #include <ncurses.h>
-
-class PeriodicMovement;
+#include "PeriodicMovement.h"
 
 class Item: public Observer<Info, State> {
   int x, y, z;
-  PeriodicMovement *movement;
+  PeriodicMovement movement;
  public:
   Item(int x, int y, int z);
-  Item(int x, int y, int z, PeriodicMovement *pm);
+  Item(int x, int y, int z, PeriodicMovement &pm);
   ErrorCode notify(Subject<Info, State> &whoFrom) override;
-  ErrorCode setMovement(PeriodicMovement *pm);
-  ErrorCode doMovement();
+  ErrorCode setMovement(PeriodicMovement &pm);
+  PeriodicMovement &getMovement();
+  virtual ErrorCode doMovement() = 0;
   virtual ErrorCode draw(WINDOW *Board) = 0;
   int getX() const; 
   int getY() const; 
-  int getZ() const; 
+  int getZ() const;
+  ErrorCode addX(int i);
+  ErrorCode addY(int i);
+  ErrorCode addZ(int i);
 };
 
 #endif 

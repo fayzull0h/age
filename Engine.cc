@@ -2,13 +2,16 @@
 #include <iostream>
 #include "unistd.h"
 #include "GameBoard.h"
+#include "Item.h"
+#include "Rectangle.h"
+#include <thread>
 
 Engine::Engine() {
   statcount = 0;
   state = State{StateType::NoChange};
   gb = nullptr;
   initscr();
-  cbreak();
+  nodelay(stdscr, true);
 }
 
 State Engine::getState() const {
@@ -22,17 +25,22 @@ ErrorCode Engine::addGameBoard(GameBoard *b) {
 }
 
 ErrorCode Engine::go() {
-  int ch;
+  char ch;
+
+  /* Print the initial setup and everything on it */
   state.type = StateType::Items;
   gb->drawBoard(this);
   refresh();
   state.type = StateType::NoChange;
-  while (ch = std::cin.peek()) {
-    usleep(100000);
+
+  while (ch = getch()) {
+    usleep(50000);
     for (auto &item: items) {
       if (item->doMovement() == ErrorCode::Success) state.type = StateType::Items; 
     }
     gb->drawBoard(this);
+    refresh();
+    if (ch == 'j') break;
   }
 
   endwin();

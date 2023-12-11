@@ -14,9 +14,9 @@ class PeriodicMovement {
   int gety() const { return changey; }
   int getz() const { return changez; }
 
-  void reversex() { changex *= -1; }
-  void reversey() { changey *= -1; }
-  void reversez() { changez *= -1; }
+  int reversex() { return (changex *= -1); }
+  int reversey() { return (changey *= -1); }
+  int reversez() { return (changez *= -1); }
 };
 
 #endif
