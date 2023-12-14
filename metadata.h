@@ -3,18 +3,32 @@
 #include <cstddef>
 #include <string>
 
-enum class ErrorCode{
+class Item;
+
+enum ErrorCode{
   /* Success */
-  Success = 0,
+  Success = 200,
+
+  /* Other messages */
+  DeleteMe = 300,
+  NoMovement = 301,
+  DeleteMove = 302,
   
   /* Failures */
   BadRequest = 400,
-  NoMovement = 401
-
+  InitFailure = 401,
+  DrawFailure = 402
 };
 
-struct Info {
-  int x, y, z;
+enum CollisionType {
+  PassThrough,
+  Stop
+};
+
+struct Collision {
+  CollisionType ct;
+  Item *me;
+  Item *other;
 };
 
 struct Status {
@@ -22,16 +36,21 @@ struct Status {
   int value;
 };
 
+struct Triple {
+  int x, y;
+  char c;
+};
+
 /* State types are:
 */
-enum class StateType {
+enum StateType {
   NoChange,
   Items,
   Stats,
   All
 };
 
-struct State {
+struct EngineState {
   StateType type;
 };
 

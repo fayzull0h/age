@@ -3,82 +3,62 @@
 #include "unistd.h"
 #include "GameBoard.h"
 #include "Item.h"
-#include "Rectangle.h"
-#include <thread>
+#include "GameState.h"
 
-Engine::Engine() {
-  statcount = 0;
-  state = State{StateType::NoChange};
+Engine::Engine(GameState *gs, bool (*wincheck)(GameState *)): gb{nullptr},
+  gamestate{gs}, wincheck{wincheck} {
+  state = EngineState{StateType::NoChange};
   gb = nullptr;
   initscr();
+  keypad(stdscr, true);
+  noecho();
   nodelay(stdscr, true);
 }
 
-State Engine::getState() const {
-  return state;
-}
+EngineState Engine::getEngineState() const { return state; }
 
 ErrorCode Engine::addGameBoard(GameBoard *b) {
-  if (b) gb = b;
-  else return ErrorCode::BadRequest;
-  return ErrorCode::Success;
+  if (b) {
+    gb = b;
+    gb->init();
+  } else return BadRequest;
+  return Success;
+}
+
+ErrorCode Engine::addInputHandler(bool (*ih)(const int&, GameState *)) {
+  if (ih) inputHandler = ih;
+  else return BadRequest;
+  return Success;
 }
 
 ErrorCode Engine::go() {
-  char ch;
+  bool game = true;
+  int ch;
 
-  /* Print the initial setup and everything on it */
-  state.type = StateType::Items;
-  gb->drawBoard(this);
-  refresh();
-  state.type = StateType::NoChange;
+  while (game) {
+    /* Get input and pass it to the input handler (provided by game programmer) */
+    ch = getch();
+    game = inputHandler(ch, gamestate);
+    flushinp();
 
-  while (ch = getch()) {
-    usleep(50000);
-    for (auto &item: items) {
-      if (item->doMovement() == ErrorCode::Success) state.type = StateType::Items; 
+    /* Send tick to all pieces */
+    for (int i = 0, c = gamestate->items.size(); i < c; ++i) {
+      gamestate->items[i]->tick(gb);
     }
-    gb->drawBoard(this);
+
+    /* Draw the board and refresh the screen */
+    gb->drawState(gamestate);
     refresh();
-    if (ch == 'j') break;
+    usleep(50000);
   }
 
   endwin();
-  return ErrorCode::Success;
+  return Success;
 }
 
-ErrorCode Engine::addStat(const Status &s) {
-  switch(statcount++) {
-    case 0:
-      stat1 = s;
-      break;
-    case 1:
-      stat2 = s;
-      break;
-    case 2:
-      stat3 = s;
-      break;
-    default:
-      return ErrorCode::BadRequest;
-  }
-  return ErrorCode::Success;
+Engine::~Engine() { 
+  // for (auto &it: items) it = nullptr;
+  if (gb) gb = nullptr;
+  // if (player) player = nullptr;
 }
 
-ErrorCode Engine::addItem(Item *item) {
-  items.emplace_back(item);
-  gb->addItem(item);
-  return ErrorCode::Success;
-}
-
-std::vector<Status> Engine::getStats() const {
-  switch(statcount) {
-    case 1:
-      return std::vector<Status>{stat1};
-    case 2:
-      return std::vector<Status>{stat1, stat2};
-    case 3:
-      return std::vector<Status>{stat1, stat2, stat3};
-  }
-  std::vector<Status> result;
-  return result;
-}

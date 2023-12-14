@@ -1,25 +1,29 @@
 #ifndef GAME_BOARD_H
 #define GAME_BOARD_H
 
-#include "observer.h"
-#include "subject.h"
 #include <ncurses.h>
 #include "metadata.h"
 #include <vector>
 
 class Item;
 class Engine;
+class GameState;
 
-class GameBoard: public Subject<Info, State>, public Observer<Info, State> {
-  WINDOW *Board;
+enum BoardType { Solid, View };
+
+class GameBoard {
   std::vector<Item *> items;
+  Item *player;
+  WINDOW *Board;
+  ErrorCode init();
  public:
-  GameBoard();
+  const BoardType boardtype;
+  GameBoard(BoardType b);
   ErrorCode addItem(Item *it);
-  ErrorCode notify(Subject<Info, State> &whoFrom) override;
-  ErrorCode drawBoard(Engine *eng);
+  ErrorCode drawState(GameState *gs);
   WINDOW * getBoard() const;
   ~GameBoard();
+  friend class Engine;
 };
 
-#endif 
+#endif
