@@ -12,7 +12,6 @@ class Engine {
   // std::vector<Status> stats;
   // std::vector<Item *> items;
   GameBoard *gb; 
-  EngineState state;
   // Item *player;
 
   GameState *gamestate;
@@ -24,7 +23,6 @@ class Engine {
   ErrorCode go();
   ErrorCode addGameBoard(GameBoard *gb);
   ErrorCode addInputHandler(bool (*ih)(const int&, GameState *));
-  EngineState getEngineState() const;
   ~Engine();
 };
 

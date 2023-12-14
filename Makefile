@@ -26,6 +26,9 @@ main.o: main.cc Engine.h GameBoard.h Rectangle.h Single.h metadata.h Movements.h
 Item.o: Item.cc metadata.h
 	${CC} ${CFLAGS} -c Item.cc
 
+Collision.o: Collision.cc Item.h
+	${CC} ${CFLAGS} -c Collision.cc
+
 Single.o: Single.cc Item.h
 	${CC} ${CFLAGS} -c Single.cc
 

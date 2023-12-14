@@ -2,6 +2,7 @@
 #define ITEM_H
 
 #include "metadata.h"
+#include "Collision.h"
 #include <vector>
 #include <ncurses.h>
 #include <memory>
@@ -9,6 +10,7 @@
 class Movement;
 class PeriodicMovement;
 class GameBoard;
+class GameState;
 
 class Item {
   int x, y, z;
@@ -27,7 +29,7 @@ class Item {
   ErrorCode setPeriodicMovement(PeriodicMovement *pm);
   /* TO DELETE */
   // ErrorCode doMovements(GameBoard *gb);
-  ErrorCode tick(GameBoard *gb);
+  ErrorCode tick(GameState *gs, GameBoard *gb);
 
   int getX(); 
   int getY(); 
@@ -36,6 +38,12 @@ class Item {
   ErrorCode addY(int i);
   ErrorCode addZ(int i);
   int getTicks() const;
+  int getXV() const { return xvelocity; }
+  int getYV() const { return yvelocity; }
+  int reverseXV() { return xvelocity *= -1; }
+  int reverseYV() { return yvelocity *= -1; }
+  int stopXV() { return xvelocity = 0; }
+  int stopYV() { return yvelocity = 0; }
   ErrorCode addTick();
 };
 

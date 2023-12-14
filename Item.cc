@@ -1,5 +1,7 @@
 #include "Item.h"
 #include "Movements.h"
+#include "GameState.h"
+#include "Collision.h"
 
 Item::Item(int x, int y, int z): x{x}, y{y}, z{z}, ticksOffScreen{0},
   xvelocity{0}, yvelocity{0}, periodicMovement{nullptr} {}
@@ -41,35 +43,31 @@ ErrorCode Item::addZ(int i) {
   return Success; 
 }
 
-/* TO DELETE 
-ErrorCode Item::doMovements(GameBoard *gb) {
-  for (size_t i = 0, c = movements.size(); i < c; ++i) {
-    Movement *m = movements[i];
-    if (m->getType() == MovementType::Linear) {
-      ErrorCode result = m->move(gb, this);
-      if (result == DeleteMe) return DeleteMe;
-      else if (result == DeleteMove) {
-        movements.erase(movements.begin()+i);
-        return Success;
-      }
-    }
-  }
-  return Success;
-}
-*/
+ErrorCode Item::tick(GameState *gs, GameBoard *gb) {
+  if (getTicks() > 10) return Deleted;
+  if (periodicMovement) periodicMovement->move();
 
-ErrorCode Item::tick(GameBoard *gb) {
-  if (getTicks() > 10) return DeleteMe;
-  if (periodicMovement) periodicMovement->move(gb, this);
+  if (gb->boardtype == Solid) {
+    if (x+xvelocity < 0 || x+xvelocity+getWidth()>79) reverseXV();
+    if (y+yvelocity < 0 || y+yvelocity+getHeight()>24) reverseYV();
+  }
+
   addX(xvelocity);
   addY(yvelocity);
-  // return doMovements(gb);
-  return Success;
+
+  std::vector<Collision *> *collisions = gs->getCollisions();
+  ErrorCode result = Success;
+
+  for (size_t i = 0, c = collisions->size(); i < c; ++i) {
+    result = collisions->at(i)->checkCollision();
+  }
+
+  return result;
 }
 
 int Item::getTicks() const { return ticksOffScreen; }
 
 ErrorCode Item::addTick() { 
-  if (++ticksOffScreen > 10) return DeleteMe;
+  if (++ticksOffScreen > 10) return Deleted;
   else return NoMovement;
 }

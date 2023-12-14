@@ -7,6 +7,18 @@
 #include "Bitmap.h"
 #include "Movements.h"
 #include "GameState.h"
+#include "Collision.h"
+
+/** TODO List:
+the update method for gamestate
+ * - finish collision mechanism
+ * - test collision mechanism
+ * - add gravitation movement
+ * - change badrequests to throws
+ * - change errorcode receiving accordingly
+ * - win/lose logic needs work
+ * - damaging items (?)
+ */
 
 #include <ncurses.h>
 
@@ -49,25 +61,33 @@ bool inputHandler(const int &ch, GameState *gs) {
   return true;
 }
 
+
+
 int main() { 
   GameBoard gb{Solid};
   GameState game{};
 
   Status s1{"RectPos", 1};
+  Status s2{"RectPos", 60};
 
-  Rectangle fr{1, 1, 10, 5, 10, '#'}; 
-  Rectangle dollar{15, 1, 4, 4, 4, '$'};
+  Rectangle fr{20, 1, 10, 5, 10, '#'}; 
+  Rectangle dollar{60, 1, 10, 4, 4, '$'};
 
-  Movement frMoveRight{Right, 2};
-  Movement moveDown{Down, 1};
+  Movement dollarMoveLeft{Left, 1};
+  Movement moveRight{Right, 1};
 
   PeriodicMovement blink = PeriodicMovement();
 
   Single blank{-1, -1, -1, ' '};
   blink.addForm(&blank);
 
-  dollar.setMovement(&moveDown);
-  dollar.setMovement(&frMoveRight);
+  fr.setMovement(&moveRight);
+  // dollar.setMovement(&moveDown);
+  // dollar.setMovement(&dollarMoveLeft);
+  // dollar.setPeriodicMovement(&blink);
+
+  WinCollision bouncer{&fr, &dollar};
+  game.addCollision(&bouncer);
 
   std::vector<Triple> playerbitmap = {
     Triple{40, 20, '@'},
@@ -91,8 +111,9 @@ int main() {
   e.addInputHandler(&inputHandler);
 
   game.addItem(&fr);
-  game.addItem(&dollar);
-  game.addPlayer(&player);
+  game.addPlayer(&dollar);
   game.addStat(s1);
+  game.addStat(s2);
   e.go();
+  return 0;
 }

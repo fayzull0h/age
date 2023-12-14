@@ -7,15 +7,12 @@
 
 Engine::Engine(GameState *gs, bool (*wincheck)(GameState *)): gb{nullptr},
   gamestate{gs}, wincheck{wincheck} {
-  state = EngineState{StateType::NoChange};
   gb = nullptr;
   initscr();
   keypad(stdscr, true);
   noecho();
   nodelay(stdscr, true);
 }
-
-EngineState Engine::getEngineState() const { return state; }
 
 ErrorCode Engine::addGameBoard(GameBoard *b) {
   if (b) {
@@ -42,8 +39,14 @@ ErrorCode Engine::go() {
     flushinp();
 
     /* Send tick to all pieces */
-    for (int i = 0, c = gamestate->items.size(); i < c; ++i) {
-      gamestate->items[i]->tick(gb);
+    ErrorCode result = Success;
+    for (auto item: gamestate->items) {
+      result = item->tick(gamestate, gb);
+    }
+
+    if (result == GameWon) {
+      gb->drawWin();
+      break;
     }
 
     /* Draw the board and refresh the screen */

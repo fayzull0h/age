@@ -12,16 +12,14 @@ class GameState;
 enum BoardType { Solid, View };
 
 class GameBoard {
-  std::vector<Item *> items;
-  Item *player;
   WINDOW *Board;
   ErrorCode init();
  public:
   const BoardType boardtype;
   GameBoard(BoardType b);
-  ErrorCode addItem(Item *it);
   ErrorCode drawState(GameState *gs);
-  WINDOW * getBoard() const;
+  WINDOW *getBoard() const;
+  ErrorCode drawWin();
   ~GameBoard();
   friend class Engine;
 };

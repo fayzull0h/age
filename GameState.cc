@@ -1,9 +1,6 @@
 #include "GameState.h"
 #include "Item.h"
-
-// GameState::GameState(): state{NoChange}, player{nullptr} {}
-
-StateType GameState::getState() { return state; }
+#include "Collision.h"
 
 ErrorCode GameState::addStat(const Status &s) {
   if (stats.size() < 3) stats.emplace_back(s);
@@ -36,6 +33,8 @@ ErrorCode GameState::addPlayer(Item *p) {
   return Success;
 }
 
-const std::vector<Status> *GameState::getStats() const { return &stats; }
-
-// GameState::~GameState() { if (player) player = nullptr; }
+ErrorCode GameState::addCollision(Collision *c) {
+  if (c) collisions.emplace_back(c);
+  else throw BadRequest;
+  return Success;
+}

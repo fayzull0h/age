@@ -3,16 +3,14 @@
 #include <cstddef>
 #include <string>
 
-class Item;
-
 enum ErrorCode{
   /* Success */
   Success = 200,
+  GameWon = 201,
 
   /* Other messages */
-  DeleteMe = 300,
-  NoMovement = 301,
-  DeleteMove = 302,
+  NoMovement = 300,
+  Deleted = 301,
   
   /* Failures */
   BadRequest = 400,
@@ -20,15 +18,17 @@ enum ErrorCode{
   DrawFailure = 402
 };
 
-enum CollisionType {
+enum CollisionCode {
+  FromTop,
+  FromRight,
+  FromBottom,
+  FromLeft,
   PassThrough,
-  Stop
-};
-
-struct Collision {
-  CollisionType ct;
-  Item *me;
-  Item *other;
+  Bounce,
+  Stop,
+  DeleteMe,
+  DeleteOther,
+  DeleteBoth
 };
 
 struct Status {
@@ -39,19 +39,6 @@ struct Status {
 struct Triple {
   int x, y;
   char c;
-};
-
-/* State types are:
-*/
-enum StateType {
-  NoChange,
-  Items,
-  Stats,
-  All
-};
-
-struct EngineState {
-  StateType type;
 };
 
 #endif

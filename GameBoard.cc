@@ -4,25 +4,12 @@
 #include "Engine.h"
 #include <ncurses.h>
 
-GameBoard::GameBoard(BoardType b): player{nullptr}, boardtype{b}, Board{nullptr} {
+GameBoard::GameBoard(BoardType b): boardtype{b}, Board{nullptr} {
   refresh();
   mvwprintw(Board, 11, 30, "Press any key to begin.");
   box(Board, 0, 0);
   wrefresh(Board);
   refresh();
-}
-
-ErrorCode GameBoard::addItem(Item *it) {
-  if (it == nullptr) return BadRequest;
-  bool inserted = false;
-  for (int i = 0, c = items.size(); i < c; ++i) {
-    if (it->getZ() < items[i]->getZ()) {
-      items.insert(items.begin()+i, it);
-      inserted = true;
-    }
-  }
-  if (!inserted) items.emplace_back(it);
-  return Success; 
 }
 
 ErrorCode GameBoard::init() {
@@ -32,6 +19,18 @@ ErrorCode GameBoard::init() {
   refresh();
   if (Board) return Success;
   else return InitFailure;
+}
+
+ErrorCode GameBoard::drawWin() {
+  wclear(Board);
+  box(Board, 0, 0);
+  mvprintw(12, 35, "YOU WON!");
+  mvprintw(13, 28, "Press any key to exit...");
+  wrefresh(Board);
+  refresh();
+  nodelay(stdscr, false);
+  getch();
+  return Success;
 }
 
 ErrorCode GameBoard::drawState(GameState *gs) {
@@ -50,6 +49,7 @@ ErrorCode GameBoard::drawState(GameState *gs) {
 
   box(Board, 0, 0);
   wrefresh(Board);
+  refresh();
   return result;
 }
 
