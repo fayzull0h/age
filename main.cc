@@ -56,17 +56,18 @@ int main() {
   Status s1{"RectPos", 1};
 
   Rectangle fr{1, 1, 10, 5, 10, '#'}; 
-  Rectangle dollar{1, 1, 4, 4, 4, '$'};
+  Rectangle dollar{15, 1, 4, 4, 4, '$'};
 
-  LinearMovement<Right> frMoveRight{15};
-  LinearMovement<Down> moveDown{-1};
+  Movement frMoveRight{Right, 2};
+  Movement moveDown{Down, 1};
 
   PeriodicMovement blink = PeriodicMovement();
 
   Single blank{-1, -1, -1, ' '};
   blink.addForm(&blank);
 
-  dollar.addMovement(&moveDown);
+  dollar.setMovement(&moveDown);
+  dollar.setMovement(&frMoveRight);
 
   std::vector<Triple> playerbitmap = {
     Triple{40, 20, '@'},

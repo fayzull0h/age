@@ -13,9 +13,9 @@ class GameBoard;
 class Item {
   int x, y, z;
   int ticksOffScreen;
+  int xvelocity, yvelocity;
  protected:
   PeriodicMovement *periodicMovement;
-  std::vector<Movement *> movements;
   std::vector<Collision *> collisions;
  public:
   Item(int x, int y, int z);
@@ -23,8 +23,10 @@ class Item {
   virtual int getHeight() = 0;
   virtual int getWidth() = 0;
 
-  ErrorCode addMovement(Movement *m);
-  ErrorCode doMovements(GameBoard *gb);
+  ErrorCode setMovement(Movement *m);
+  ErrorCode setPeriodicMovement(PeriodicMovement *pm);
+  /* TO DELETE */
+  // ErrorCode doMovements(GameBoard *gb);
   ErrorCode tick(GameBoard *gb);
 
   int getX(); 

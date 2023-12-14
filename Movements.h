@@ -9,25 +9,22 @@
 #include "Bitmap.h"
 #include <memory>
 
+#define MAX_SPEED 3
+
 enum MovementType {
-  Linear,
+  Up,
+  Down,
+  Right,
+  Left,
   Periodic
 };
 
-class Movement {
-  MovementType t;
- public:
-  Movement(const MovementType &type): t{type} {}
-  virtual MovementType getType() const = 0; 
-  virtual ErrorCode move(GameBoard *gb, Item *it) = 0;
-};
-
-class PeriodicMovement: public Movement {
+class PeriodicMovement {
   std::vector<Item *> forms;
   int pos = 0;
   bool active = true;
  public:
-  PeriodicMovement(): Movement{MovementType::Periodic} {}
+  PeriodicMovement() {}
   ErrorCode addForm(Item *it) {
     if (it == nullptr) return BadRequest;
     if (dynamic_cast<Rectangle *>(it)) forms.emplace_back(new Rectangle{*(dynamic_cast<Rectangle *>(it))});
@@ -35,8 +32,8 @@ class PeriodicMovement: public Movement {
     else if (dynamic_cast<Bitmap *>(it)) forms.emplace_back(new Bitmap{*(dynamic_cast<Bitmap *>(it))});
     return Success;
   }
-  MovementType getType() const override { return MovementType::Periodic; }
-  ErrorCode move(GameBoard *gb, Item *it) override {
+  MovementType getType() const { return MovementType::Periodic; }
+  ErrorCode move(GameBoard *gb, Item *it) {
     if (active) {
       pos = (pos + 1) % (forms.size()+1);
     } else return NoMovement;
@@ -50,29 +47,43 @@ class PeriodicMovement: public Movement {
   int getPos() const { return pos; }
 };
 
-/**
+/* Linear Movements */
+
+class Movement final {
+  MovementType t;
+  int m;
+ public:
+  Movement(const MovementType &t, const int &m): t{t}, m{m} {
+    if (m > MAX_SPEED || m < -MAX_SPEED) throw BadRequest;
+  }
+  int magnitude() const { return m; }
+  MovementType getType() const { return t; }
+};
+
+/** TO DeleTe
  * Linear Movement:
  * - can move Up, Down, Left, Right
  * - LinearMovement<Direction>(x)
  *    - x specifies how many units to move
  *    - a negative x specifies gravitation towards a side
-*/
-template<typename T> class LinearMovement: public Movement {
-  int m;
+class LinearMovement: public Movement {
+  MovementType t;
  public:
-  LinearMovement(int x): Movement{MovementType::Linear}, m{x} {}
-  const int &magnitude() const { return m; }
-  MovementType getType() const override { return MovementType::Linear; }
+  LinearMovement(int x): Movement{x} {}
+  virtual MovementType __type() const = 0;
+  MovementType getType() const override { return static_cast<T*>(this)->__type(); }
   ErrorCode move(GameBoard *gb, Item *it) override {
     if (m == 0) return DeleteMove;
     ErrorCode result = static_cast<T*>(this)->__move(gb, it);
     if (result == Success && m > 0) --m;
     return result;
   }
+  
 };
 
 class Up: public LinearMovement<Up> {
   friend class LinearMovement;
+  MovementType __type() const override { return MoveUp; }
   ErrorCode __move(GameBoard *gb, Item *it) {
     int height = it->getHeight(); 
     int y = it->getY();
@@ -88,10 +99,13 @@ class Up: public LinearMovement<Up> {
       } else return it->addTick();
     }
   }
+  
 };
 
 class Down: public LinearMovement<Down> {
   friend class LinearMovement;
+  MovementType __type() const override { return MoveDown; }
+  
   ErrorCode __move(GameBoard *gb, Item *it) {
     int height = it->getHeight();
     int y = it->getY();
@@ -107,10 +121,12 @@ class Down: public LinearMovement<Down> {
       } else return it->addTick();
     }
   }
+  
 };
 
 class Right: public LinearMovement<Right> {
   friend class LinearMovement;
+  MovementType __type() const override { return MoveRight; }
   ErrorCode __move(GameBoard *gb, Item *it) {
     int width = it->getWidth();
     int x = it->getX();
@@ -130,6 +146,7 @@ class Right: public LinearMovement<Right> {
 
 class Left: public LinearMovement<Left> {
   friend class LinearMovement;
+  MovementType __type() const override { return MoveLeft; }
   ErrorCode __move(GameBoard *gb, Item *it) {
     int width = it->getWidth();
     int x = it->getX();
@@ -146,5 +163,6 @@ class Left: public LinearMovement<Left> {
     }
   }
 };
+*/
 
 #endif
