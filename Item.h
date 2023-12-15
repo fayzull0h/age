@@ -18,7 +18,6 @@ class Item {
   int xvelocity, yvelocity;
  protected:
   PeriodicMovement *periodicMovement;
-  std::vector<Collision *> collisions;
  public:
   Item(int x, int y, int z);
   virtual ErrorCode draw(WINDOW *Board) = 0;
@@ -27,19 +26,22 @@ class Item {
 
   ErrorCode setMovement(Movement *m);
   ErrorCode setPeriodicMovement(PeriodicMovement *pm);
-  /* TO DELETE */
-  // ErrorCode doMovements(GameBoard *gb);
-  ErrorCode tick(GameState *gs, GameBoard *gb);
+
+  ErrorCode tick(GameState *gs, BoardType btype);
 
   int getX(); 
   int getY(); 
   int getZ();
+  int setX(int n) { return x = n; }
+  int setY(int n) { return y = n; }
+  int setZ(int n) { return z = n; }
   ErrorCode addX(int i);
   ErrorCode addY(int i);
   ErrorCode addZ(int i);
-  int getTicks() const;
   int getXV() const { return xvelocity; }
   int getYV() const { return yvelocity; }
+  int setXV(int n) { return xvelocity = 2*n; }
+  int setYV(int n) { return yvelocity = n; }
   int reverseXV() { return xvelocity *= -1; }
   int reverseYV() { return yvelocity *= -1; }
   int stopXV() { return xvelocity = 0; }

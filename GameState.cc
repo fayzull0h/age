@@ -1,6 +1,7 @@
 #include "GameState.h"
 #include "Item.h"
 #include "Collision.h"
+#include "metadata.h"
 
 ErrorCode GameState::addStat(const Status &s) {
   if (stats.size() < 3) stats.emplace_back(s);
@@ -30,6 +31,18 @@ ErrorCode GameState::addPlayer(Item *p) {
     player = p;
     addItem(p);
   } else return BadRequest;
+  return Success;
+}
+
+ErrorCode GameState::deleteItem(Item *it) {
+  for (size_t i = 0, c = collisions.size(); i < c; ++i) {
+    if ((collisions[i]->getItem1() == it) || (collisions[i]->getItem2() == it))
+      collisions.erase(collisions.begin()+i);
+  }
+
+  for (size_t i = 0, c = items.size(); i < c; ++i) {
+    if (items[i] == it) items.erase(items.begin()+i);
+  }
   return Success;
 }
 

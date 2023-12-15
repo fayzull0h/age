@@ -9,8 +9,6 @@ class Item;
 class Engine;
 class GameState;
 
-enum BoardType { Solid, View };
-
 class GameBoard {
   WINDOW *Board;
   ErrorCode init();
@@ -20,6 +18,7 @@ class GameBoard {
   ErrorCode drawState(GameState *gs);
   WINDOW *getBoard() const;
   ErrorCode drawWin();
+  ErrorCode drawLose();
   ~GameBoard();
   friend class Engine;
 };

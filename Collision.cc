@@ -25,7 +25,7 @@ ErrorCode Collision::checkCollision() {
         return collide(FromBottom);
     }
   } else if (r1 && s2) {
-    if ((s2->getY() > r1->getY()) && (s2->getY() <= r1->getY()+r1->getHeight())) {
+    if ((s2->getY() >= r1->getY()) && (s2->getY() < r1->getY()+r1->getHeight())) {
       // r1 hits s2 from left
       if ((r1->getXV() > 0) && (r1->getX()+r1->getWidth()+r1->getXV() >= s2->getX()) && (r1->getX()+r1->getWidth() < s2->getX()))
         return collide(FromLeft);
@@ -33,7 +33,7 @@ ErrorCode Collision::checkCollision() {
       if ((r1->getXV() < 0) && (r1->getX()+r1->getXV() <= s2->getX()) && (r1->getX() < s2->getX()))
         return collide(FromRight);
     }
-    else if ((s2->getX() > r1->getX()) && (s2->getX() < r1->getX()+r1->getWidth())) {
+    else if ((s2->getX() >= r1->getX()) && (s2->getX() < r1->getX()+r1->getWidth())) {
       // r1 hits s2 from top
       if ((r1->getYV() > 0) && (r1->getY()+r1->getHeight()+r1->getYV() >= s2->getY()) && (r1->getY()+r1->getHeight() < s2->getY()))
         return collide(FromTop);
@@ -50,7 +50,7 @@ ErrorCode Collision::checkCollision() {
       if ((s1->getXV() < 0) && (s1->getX()+s1->getXV() <= r2->getX()+r2->getWidth()) && (s1->getX() > r2->getX()+r2->getWidth()))
         return collide(FromRight);
     }
-    else if ((s1->getX() > r2->getX()) && (s1->getX() <= r2->getX()+r2->getWidth())) {
+    else if ((s1->getX() >= r2->getX()) && (s1->getX() < r2->getX()+r2->getWidth())) {
       // s1 hits r2 from the top
       if ((s1->getYV() > 0) && (s1->getY()+s1->getYV() >= r2->getY()) && (s1->getY() < r2->getY()))
         return collide(FromTop);
@@ -100,7 +100,31 @@ ErrorCode BounceCollision::collide(CollisionCode code) {
     default:
       return NoMovement;
   }
-  return Success;
+  return Collided;
+}
+
+ErrorCode DestroyCollision::collide(CollisionCode code) {
+  switch(code) {
+    case FromLeft:
+      it1->reverseXV();
+      if (it2->getXV() < 0) it2->stopXV();
+      return Success;
+    case FromRight:
+      it1->reverseXV();
+      if (it2->getXV() > 0) it2->stopXV();
+      return Success;
+    case FromTop:
+      it1->reverseYV();
+      if (it2->getYV() < 0) it2->stopXV();
+      break;
+    case FromBottom:
+      it1->reverseYV();
+      if (it2->getYV() > 0) it2->stopXV();
+      break;
+    default:
+      return NoMovement;
+  }
+  return DeleteOther;
 }
 
 ErrorCode StopCollision::collide(CollisionCode code) {
@@ -108,7 +132,7 @@ ErrorCode StopCollision::collide(CollisionCode code) {
   it2->stopXV();
   it1->stopYV();
   it2->stopYV();
-  return Success;
+  return Collided;
 }
 
 ErrorCode WinCollision::collide(CollisionCode code) {

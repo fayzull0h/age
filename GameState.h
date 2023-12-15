@@ -10,6 +10,7 @@ class Status;
 #include "metadata.h"
 
 class GameState {
+ protected:
   std::vector<Status> stats;
   std::vector<Item *> items;
   std::vector<Collision *> collisions;
@@ -22,12 +23,14 @@ class GameState {
   ErrorCode addCollision(Collision *c);
 
   Item *getPlayer() { return player; }
+  
+  ErrorCode deleteItem(Item *it);
 
   const std::vector<Status> *getStats() const { return &stats; } 
   const std::vector<Item *> *getItems() { return &items; }
   std::vector<Collision *> *getCollisions() { return &collisions; }
 
-  ErrorCode update();
+  virtual ErrorCode tick(BoardType btype) = 0;
 
   ~GameState() { if (player) player = nullptr; }
   friend class Engine;

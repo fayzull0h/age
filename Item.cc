@@ -27,6 +27,12 @@ ErrorCode Item::setMovement(Movement *m) {
   } catch(...) { throw; }
   return Success; 
 }
+/*
+ErrorCode Item::draw(WINDOW *Board) {
+  if (periodicMovement) { if (periodicMovement->getPos() > 0) periodicMovement->draw(Board); }
+  else __drawItem(Board);
+}
+*/
 
 ErrorCode Item::addX(int i) {
   x += i;
@@ -43,14 +49,15 @@ ErrorCode Item::addZ(int i) {
   return Success; 
 }
 
-ErrorCode Item::tick(GameState *gs, GameBoard *gb) {
-  if (getTicks() > 10) return Deleted;
+ErrorCode Item::tick(GameState *gs, BoardType btype) {
+  if (ticksOffScreen > 10) return Deleted;
   if (periodicMovement) periodicMovement->move();
 
-  if (gb->boardtype == Solid) {
+  if (btype == Solid) {
     if (x+xvelocity < 0 || x+xvelocity+getWidth()>79) reverseXV();
     if (y+yvelocity < 0 || y+yvelocity+getHeight()>24) reverseYV();
-  }
+  } else if (x > 1 && x < 79 && y > 1 && y < 24) ticksOffScreen = 0;
+  else addTick();
 
   addX(xvelocity);
   addY(yvelocity);
@@ -60,12 +67,18 @@ ErrorCode Item::tick(GameState *gs, GameBoard *gb) {
 
   for (size_t i = 0, c = collisions->size(); i < c; ++i) {
     result = collisions->at(i)->checkCollision();
+    if (result == DeleteOther) {
+      gs->deleteItem(collisions->at(i)->getItem2());
+    } else if (result == DeleteMe) {
+      gs->deleteItem(this);
+    } else if (result == DeleteBoth) {
+      gs->deleteItem(collisions->at(i)->getItem2());
+      gs->deleteItem(this);
+    }
   }
 
   return result;
 }
-
-int Item::getTicks() const { return ticksOffScreen; }
 
 ErrorCode Item::addTick() { 
   if (++ticksOffScreen > 10) return Deleted;

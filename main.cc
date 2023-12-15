@@ -1,119 +1,54 @@
-#include "Engine.h"
-#include "Single.h"
-#include "GameBoard.h"
-#include "metadata.h"
-#include "Rectangle.h"
-#include "Item.h"
-#include "Bitmap.h"
-#include "Movements.h"
-#include "GameState.h"
-#include "Collision.h"
+#include "BrickBreaker.h"
 
-/** TODO List:
-the update method for gamestate
- * - finish collision mechanism
- * - test collision mechanism
- * - add gravitation movement
- * - change badrequests to throws
- * - change errorcode receiving accordingly
- * - win/lose logic needs work
- * - damaging items (?)
- */
-
-#include <ncurses.h>
-
-#include <iostream>
-
-bool testwin(GameState *gs) { return false; }
-bool inputHandler(const int &ch, GameState *gs) {
-  if (ch == KEY_F(1)) return false;
-  Item *player = gs->getPlayer();
-  if (player) { 
-    switch(ch) {
-      case 'w':
-        player->addY(-1);
-        break;
-      case 's':
-        player->addY(1);
-        break;
-      case 'd':
-        player->addX(1);
-        break;
-      case 'a':
-        player->addX(-1);
-        break;
-      case KEY_UP:
-        player->addY(-1);
-        break;
-      case KEY_DOWN:
-        player->addY(1);
-        break;
-      case KEY_RIGHT:
-        player->addX(1);
-        break;
-      case KEY_LEFT:
-        player->addX(-1);
-        break;
-      default:
-        break;
-    }
-  }
-  return true;
+bool wincheck(GameState *gs) { 
+  const std::vector<Item *> *items = gs->getItems();
+  return (items->size() == 1);
 }
 
+bool losecheck(GameState *gs) {
+  const std::vector<Item *> *items = gs->getItems();
+  Item *ball = items->at(0);
+  return (ball->getY()+ball->getHeight()) >= 23;
+}
 
-
-int main() { 
+int main() {
+  BrickGame game{};
   GameBoard gb{Solid};
-  GameState game{};
 
-  Status s1{"RectPos", 1};
-  Status s2{"RectPos", 60};
+  Status score{"Score", 0};
 
-  Rectangle fr{20, 1, 10, 5, 10, '#'}; 
-  Rectangle dollar{60, 1, 10, 4, 4, '$'};
+  Rectangle ball{37, 20, 0, 2, 3, '+'};
+  ball.setYV(-1);
+  ball.setXV(-1);
+  game.addItem(&ball);
 
-  Movement dollarMoveLeft{Left, 1};
-  Movement moveRight{Right, 1};
+  for (int i = 0; i < 13; ++i) {
+    char c = '$', a = 'O';
+    if (i % 2 == 0) c = 'O', a = '$';
+    Rectangle *b1 = new Rectangle{6 * i+1, 1, 0, 4, 6, c};
+    // Rectangle *b2 = new Rectangle{6 * i+1, 5, 0, 4, 6, a};
 
-  PeriodicMovement blink = PeriodicMovement();
+    BounceCollision *d1 = new BounceCollision{&ball, b1};
+    // BounceCollision *d2 = new BounceCollision{&ball, b2};
 
-  Single blank{-1, -1, -1, ' '};
-  blink.addForm(&blank);
+    game.addCollision(d1);
+    // game.addCollision(d2);
 
-  fr.setMovement(&moveRight);
-  // dollar.setMovement(&moveDown);
-  // dollar.setMovement(&dollarMoveLeft);
-  // dollar.setPeriodicMovement(&blink);
+    game.addItem(b1);
+    // game.addItem(b2);
+  }
 
-  WinCollision bouncer{&fr, &dollar};
-  game.addCollision(&bouncer);
+  Rectangle bar{30, 22, 0, 2, 15, '#'};
+  game.addPlayer(&bar);
+  BounceCollision barBall{&ball, &bar};
+  game.addCollision(&barBall);
 
-  std::vector<Triple> playerbitmap = {
-    Triple{40, 20, '@'},
-    Triple{40, 21, '#'},
-    Triple{40, 22, '#'},
-    Triple{39, 21, '#'},
-    Triple{38, 22, '/'},
-    Triple{39, 23, '#'},
-    Triple{39, 24, '|'},
-    Triple{41, 21, '#'},
-    Triple{41, 23, '#'},
-    Triple{41, 24, '|'},
-    Triple{42, 22, '\\'}
-  };
-
-  Bitmap player{playerbitmap, 0};
-
-  Engine e = Engine(&game, &testwin);
+  Engine e{&game, &wincheck, &losecheck};
 
   e.addGameBoard(&gb);
-  e.addInputHandler(&inputHandler);
+  e.addInputHandler(&handleInputs);
 
-  game.addItem(&fr);
-  game.addPlayer(&dollar);
-  game.addStat(s1);
-  game.addStat(s2);
+  game.addStat(score);
+
   e.go();
-  return 0;
 }

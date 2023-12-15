@@ -9,17 +9,14 @@ class GameBoard;
 class GameState;
 
 class Engine {
-  // std::vector<Status> stats;
-  // std::vector<Item *> items;
   GameBoard *gb; 
-  // Item *player;
-
   GameState *gamestate;
   bool (*inputHandler)(const int&, GameState *);
   bool (*wincheck)(GameState *);
-
+  bool (*losecheck)(GameState *);
+  Item *wmsg;
  public:
-  Engine(GameState *gs, bool (*wincheck)(GameState *));
+  Engine(GameState *gs, bool (*wincheck)(GameState *), bool (*losecheck)(GameState *));
   ErrorCode go();
   ErrorCode addGameBoard(GameBoard *gb);
   ErrorCode addInputHandler(bool (*ih)(const int&, GameState *));

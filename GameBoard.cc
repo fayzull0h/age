@@ -4,7 +4,7 @@
 #include "Engine.h"
 #include <ncurses.h>
 
-GameBoard::GameBoard(BoardType b): boardtype{b}, Board{nullptr} {
+GameBoard::GameBoard(BoardType b): Board{nullptr}, boardtype{b} {
   refresh();
   mvwprintw(Board, 11, 30, "Press any key to begin.");
   box(Board, 0, 0);
@@ -25,11 +25,29 @@ ErrorCode GameBoard::drawWin() {
   wclear(Board);
   box(Board, 0, 0);
   mvprintw(12, 35, "YOU WON!");
-  mvprintw(13, 28, "Press any key to exit...");
+  mvprintw(13, 28, "Press ENTER to exit...");
   wrefresh(Board);
   refresh();
   nodelay(stdscr, false);
-  getch();
+  int ch;
+  while ((ch = getch())) {
+    if (ch == KEY_ENTER) return Success;
+  }
+  return Success;
+}
+
+ErrorCode GameBoard::drawLose() {
+  wclear(Board);
+  box(Board, 0, 0);
+  mvprintw(12, 35, "YOU LOST!");
+  mvprintw(13, 28, "Press ENTER to exit...");
+  wrefresh(Board);
+  refresh();
+  nodelay(stdscr, false);
+  int ch;
+  while ((ch = getch())) {
+    if (ch == 10) return Success;
+  }
   return Success;
 }
 

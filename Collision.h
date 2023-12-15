@@ -12,7 +12,13 @@ class Collision {
  public:
   Collision(Item *i, Item *k): it1{i}, it2{k} {}
   ErrorCode checkCollision();
+  Item *getItem1() { return it1; }
+  Item *getItem2() { return it2; }
   virtual ErrorCode collide(CollisionCode code) = 0;
+  ~Collision() {
+    if (it1) it1 = nullptr;
+    if (it2) it2 = nullptr;
+  }
 };
 
 class BounceCollision: public Collision {

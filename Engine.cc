@@ -5,8 +5,8 @@
 #include "Item.h"
 #include "GameState.h"
 
-Engine::Engine(GameState *gs, bool (*wincheck)(GameState *)): gb{nullptr},
-  gamestate{gs}, wincheck{wincheck} {
+Engine::Engine(GameState *gs, bool (*wincheck)(GameState *), bool (*losecheck)(GameState *)): gb{nullptr},
+  gamestate{gs}, wincheck{wincheck}, losecheck{losecheck} {
   gb = nullptr;
   initscr();
   keypad(stdscr, true);
@@ -38,14 +38,17 @@ ErrorCode Engine::go() {
     game = inputHandler(ch, gamestate);
     flushinp();
 
-    /* Send tick to all pieces */
-    ErrorCode result = Success;
-    for (auto item: gamestate->items) {
-      result = item->tick(gamestate, gb);
+    /* Send tick to game state */
+    ErrorCode result = gamestate->tick(gb->boardtype);
+
+    /* Check if the game has been won yet */
+    if (result == GameWon || wincheck(gamestate)) {
+      gb->drawWin();
+      break;
     }
 
-    if (result == GameWon) {
-      gb->drawWin();
+    if (losecheck(gamestate)) {
+      gb->drawLose();
       break;
     }
 

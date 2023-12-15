@@ -10,6 +10,7 @@ class GameBoard;
 class Bitmap: public Item {
   std::vector<Triple> bitmap;
  public:
+  Bitmap();
   Bitmap(std::vector<Triple> &b, const int &z);
   Bitmap(int &x, int &y, int &z, char &c);
   ErrorCode draw(WINDOW *Board) override;
