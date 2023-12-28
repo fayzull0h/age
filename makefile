@@ -3,7 +3,7 @@ CXX = g++
 CXXFLAGS = -std=c++20 -Wall
 
 # Target executable name
-TARGET = snake
+TARGET = snake breakout
 
 # Automatically finds all .cpp files in the current directory
 SOURCES = $(wildcard *.cc)
