@@ -17,7 +17,7 @@ int main() {
 
   Status score{"Score", 0};
 
-  Rectangle ball{37, 20, 0, 2, 3, '+'};
+  Rectangle ball{37, 20, 1, 2, 3, '+'};
   ball.setYV(-1);
   ball.setXV(-1);
   game.addItem(&ball);
@@ -28,7 +28,7 @@ int main() {
     Rectangle *b1 = new Rectangle{6 * i+1, 1, 0, 4, 6, c};
     // Rectangle *b2 = new Rectangle{6 * i+1, 5, 0, 4, 6, a};
 
-    BounceCollision *d1 = new BounceCollision{&ball, b1};
+    StopCollision *d1 = new StopCollision{&ball, b1};
     // BounceCollision *d2 = new BounceCollision{&ball, b2};
 
     game.addCollision(d1);
@@ -36,9 +36,10 @@ int main() {
 
     game.addItem(b1);
     // game.addItem(b2);
+    // delete d1;
   }
 
-  Rectangle bar{30, 22, 0, 2, 15, '#'};
+  Rectangle bar{30, 22, 1, 2, 15, '#'};
   game.addPlayer(&bar);
   BounceCollision barBall{&ball, &bar};
   game.addCollision(&barBall);
