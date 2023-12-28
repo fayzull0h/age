@@ -11,15 +11,15 @@ class GameState;
 class Engine {
   GameBoard *gb; 
   GameState *gamestate;
-  bool (*inputHandler)(const int&, GameState *);
-  bool (*wincheck)(GameState *);
-  bool (*losecheck)(GameState *);
+  ErrorCode (*inputHandler)(const int&, GameState *);
+  ErrorCode (*wincheck)(GameState *);
+  ErrorCode (*losecheck)(GameState *);
   Item *wmsg;
  public:
-  Engine(GameState *gs, bool (*wincheck)(GameState *), bool (*losecheck)(GameState *));
+  Engine(GameState *gs, ErrorCode (*wincheck)(GameState *), ErrorCode (*losecheck)(GameState *));
   ErrorCode go();
   ErrorCode addGameBoard(GameBoard *gb);
-  ErrorCode addInputHandler(bool (*ih)(const int&, GameState *));
+  ErrorCode addInputHandler(ErrorCode (*ih)(const int&, GameState *));
   ~Engine();
 };
 

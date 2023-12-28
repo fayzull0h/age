@@ -16,19 +16,24 @@ class Item {
   int x, y, z;
   int ticksOffScreen;
   int xvelocity, yvelocity;
+  int id;
+  static int id_counter;
  protected:
+  int color;
   PeriodicMovement *periodicMovement;
  public:
-  Item(int x, int y, int z);
+  Item(int x, int y, int z, int color);
   virtual ErrorCode draw(WINDOW *Board) = 0;
   virtual int getHeight() = 0;
   virtual int getWidth() = 0;
+  virtual ~Item() {}
 
   ErrorCode setMovement(Movement *m);
   ErrorCode setPeriodicMovement(PeriodicMovement *pm);
 
   ErrorCode tick(GameState *gs, BoardType btype);
 
+  int setColor(int c);
   int getX(); 
   int getY(); 
   int getZ();
@@ -40,12 +45,13 @@ class Item {
   ErrorCode addZ(int i);
   int getXV() const { return xvelocity; }
   int getYV() const { return yvelocity; }
-  int setXV(int n) { return xvelocity = 2*n; }
-  int setYV(int n) { return yvelocity = n; }
+  int setXV(int n); 
+  int setYV(int n);
   int reverseXV() { return xvelocity *= -1; }
   int reverseYV() { return yvelocity *= -1; }
   int stopXV() { return xvelocity = 0; }
   int stopYV() { return yvelocity = 0; }
+  int getID() const { return id; }
   ErrorCode addTick();
 };
 

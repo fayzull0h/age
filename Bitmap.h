@@ -16,6 +16,7 @@ class Bitmap: public Item {
   ErrorCode draw(WINDOW *Board) override;
   int getHeight() override;
   int getWidth() override;
+  ~Bitmap() {}
 };
 
 #endif

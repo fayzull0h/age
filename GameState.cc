@@ -17,9 +17,10 @@ ErrorCode GameState::addItem(Item *it) {
 
   bool inserted = false;
   for (size_t i = 0, c = items.size(); i < c; ++i) {
-    if (it->getZ() < items[i]->getZ()) {
+    if (it->getZ() <= items[i]->getZ()) {
       items.insert(items.begin()+i, it);
       inserted = true;
+      break;
     }
   }
   if (!inserted) items.emplace_back(it);

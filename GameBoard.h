@@ -19,6 +19,7 @@ class GameBoard {
   WINDOW *getBoard() const;
   ErrorCode drawWin();
   ErrorCode drawLose();
+  ErrorCode resize(int rows, int cols);
   ~GameBoard();
   friend class Engine;
 };

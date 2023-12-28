@@ -2,10 +2,10 @@
 #include "GameBoard.h"
 #include "Movements.h"
 
-Bitmap::Bitmap(std::vector<Triple> &b, const int &z): Item{0,0,z}, bitmap{b} {}
-Bitmap::Bitmap(): Item{0,0,0} {}
+Bitmap::Bitmap(std::vector<Triple> &b, const int &z): Item{0,0,z, COLOR_GREEN}, bitmap{b} {}
+Bitmap::Bitmap(): Item{0,0,0, COLOR_GREEN} {}
 
-Bitmap::Bitmap(int &x, int &y, int &z, char &c): Item{0,0,z}, 
+Bitmap::Bitmap(int &x, int &y, int &z, char &c): Item{0,0,z, COLOR_GREEN}, 
   bitmap{Triple{x, y, c}} {}
 
 ErrorCode Bitmap::draw(WINDOW *Board) {

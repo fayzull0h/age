@@ -24,7 +24,9 @@ ErrorCode Collision::checkCollision() {
       else if ((r1->getYV() < 0) && (r1->getY()+r1->getYV() <= r2->getY()+r2->getHeight() && (r1->getY() > r2->getY()+r2->getHeight())))
         return collide(FromBottom);
     }
-  } else if (r1 && s2) {
+  } 
+  
+  else if (r1 && s2) {
     if ((s2->getY() >= r1->getY()) && (s2->getY() < r1->getY()+r1->getHeight())) {
       // r1 hits s2 from left
       if ((r1->getXV() > 0) && (r1->getX()+r1->getWidth()+r1->getXV() >= s2->getX()) && (r1->getX()+r1->getWidth() < s2->getX()))
@@ -41,7 +43,9 @@ ErrorCode Collision::checkCollision() {
       if ((r1->getYV() < 0) && (r1->getY()+r1->getYV() <= s2->getY()) && (r1->getY() > s2->getY()))
         return collide(FromBottom);
     }
-  } else if (s1 && r2) {
+  } 
+  
+  else if (s1 && r2) {
     if ((s1->getY() >= r2->getY()) && (s1->getY() < r2->getY()+r2->getHeight())) {
       // s1 hits r2 from left
       if ((s1->getXV() > 0) && (s1->getX()+s1->getXV() >= r2->getX()) && (s1->getX() < r2->getX()))
@@ -58,25 +62,30 @@ ErrorCode Collision::checkCollision() {
       if ((s1->getYV() < 0) && (s1->getY()+s1->getYV() <= r2->getY()+r2->getHeight()) && (s1->getY() > r2->getY()+r2->getHeight()))
         return collide(FromBottom);
     }
-  } else if (s1 && s2) {
-    if (s1->getY() == s2->getY()) {
+  } 
+  
+  else if (s1 && s2) {
+    if (s1->getY() == s2->getY() && s1->getX() == s2->getX()) {
       // s1 hits s2 from left
-      if ((s1->getXV() > 0) && (s1->getX()+s1->getXV() >= s2->getX()) && (s1->getX() < s2->getX()))
+      if ((s1->getXV() > 0))
         return collide(FromLeft);
       // s1 hits s2 from right
-      if ((s1->getXV() < 0) && (s1->getX()+s1->getXV() <= s2->getX()) && (s1->getX() > s2->getX()))
+      if ((s1->getXV() < 0))
         return collide(FromRight);
-    }
-    else if (s1->getX() == s2->getX()) {
       // s1 hits s2 from the top
-      if ((s1->getYV() > 0) && (s1->getY()+s1->getYV() >= s2->getY()) && (s1->getY() < s2->getY()))
+      if ((s1->getYV() > 0))
         return collide(FromTop);
       // s1 hits s2 from the bottom
-      if ((s1->getYV() < 0) && (s1->getY()+s1->getYV() <= s2->getY()) && (s1->getY() > s2->getY()))
+      if ((s1->getYV() < 0))
         return collide(FromBottom);
     }
   }
   return NoMovement;
+}
+
+Collision::~Collision() {
+  if (it1) it1 = nullptr;
+  if (it2) it2 = nullptr;
 }
 
 ErrorCode BounceCollision::collide(CollisionCode code) {

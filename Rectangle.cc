@@ -2,8 +2,11 @@
 #include "GameBoard.h"
 #include "Item.h"
 #include "Movements.h"
+#include <ncurses.h>
 
 ErrorCode Rectangle::draw(WINDOW *Board) {
+  init_pair(getID(), COLOR_BLACK, color);
+  wattron(Board, COLOR_PAIR(getID()));
   if (periodicMovement != nullptr) {
     if (periodicMovement->getPos() != 0) {
       return periodicMovement->draw(Board);
@@ -15,5 +18,6 @@ ErrorCode Rectangle::draw(WINDOW *Board) {
       mvwaddch(Board, getY()+i, getX()+j, c);
     }
   }
+  wattroff(Board, COLOR_PAIR(getID()));
   return Success;
 }

@@ -6,7 +6,6 @@
 enum ErrorCode{
   /* Success */
   Success = 200,
-  GameWon = 201,
 
   /* Other messages */
   NoMovement = 300,
@@ -15,11 +14,21 @@ enum ErrorCode{
   DeleteMe = 303,
   DeleteBoth = 304,
   Collided = 305,
+  VerticalWallCollision = 306,
+  HorizontalWallCollision = 307,
+  Resize = 308,
+
+  /* Game Logic */
+  GameStart = 400,
+  GameContinue = 401,
+  GameExit = 402,
+  GameWon = 403,
+  GameLost = 404,
   
   /* Failures */
-  BadRequest = 400,
-  InitFailure = 401,
-  DrawFailure = 402
+  BadRequest = 500,
+  InitFailure = 501,
+  DrawFailure = 502
 };
 
 enum BoardType { Solid, View };

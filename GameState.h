@@ -31,7 +31,7 @@ class GameState {
   std::vector<Collision *> *getCollisions() { return &collisions; }
 
   virtual ErrorCode tick(BoardType btype) = 0;
-
+ 
   ~GameState() { if (player) player = nullptr; }
   friend class Engine;
 };

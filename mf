@@ -20,7 +20,7 @@ GameBoard.o: GameBoard.cc metadata.h
 GameState.o: GameState.cc Item.h metadata.h
 	${CC} ${CFLAGS} -c GameState.cc
 
-main.o: main.cc Engine.h GameBoard.h Rectangle.h Single.h metadata.h Movements.h
+main.o: main.cc Engine.h GameBoard.h Rectangle.h Single.h metadata.h Movements.h Collision.h
 	${CC} ${CFLAGS} -c main.cc 
 
 Item.o: Item.cc metadata.h

@@ -12,6 +12,13 @@ GameBoard::GameBoard(BoardType b): Board{nullptr}, boardtype{b} {
   refresh();
 }
 
+ErrorCode GameBoard::resize(int rows, int cols) {
+  resizeterm(rows, cols);
+  // wrefresh(Board);
+  refresh();
+  return Success;
+}
+
 ErrorCode GameBoard::init() {
   Board = newwin(25, 80, 0, 0);
   box(Board, 0, 0);
@@ -31,7 +38,7 @@ ErrorCode GameBoard::drawWin() {
   nodelay(stdscr, false);
   int ch;
   while ((ch = getch())) {
-    if (ch == KEY_ENTER) return Success;
+    if (ch == 10) return Success;
   }
   return Success;
 }
