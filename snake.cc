@@ -12,10 +12,6 @@
 #include <random>
 #include <iostream>
 
-// #define DEBUG
-// #define LVL2
-// #define LVL5
-
 class EatCollision: public CollisionTemplate {
  public:
   EatCollision(Item *snake, Item *apple): CollisionTemplate{snake, apple} {}
