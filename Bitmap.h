@@ -11,8 +11,8 @@ class Bitmap: public Item {
   std::vector<Triple> bitmap;
  public:
   Bitmap();
-  Bitmap(std::vector<Triple> &b, const int &z);
-  Bitmap(int &x, int &y, int &z, char &c);
+  Bitmap(std::vector<Triple> &b, const int &z, int f, int l);
+  Bitmap(int &x, int &y, int &z, char &c, int f, int b);
   ErrorCode draw(WINDOW *Board) override;
   int getHeight() override;
   int getWidth() override;

@@ -8,8 +8,8 @@ class GameBoard;
 class Single: public Item {
   char c;
  public:
-  Single(int x, int y, int z, char c, int color): Item{x, y, z, color}, c{c} {}
-  Single(Single &s): Item{s.getX(), s.getY(), s.getZ(), s.color}, c{s.c} {}
+  Single(int x, int y, int z, char c, int front, int back): Item{x, y, z, front, back}, c{c} {}
+  Single(Single &s): Item{s.getX(), s.getY(), s.getZ(), s.frontColor, s.backColor}, c{s.c} {}
   ErrorCode draw(WINDOW *Board) override;
   int getHeight() override { return 1; }
   int getWidth() override { return 1; }

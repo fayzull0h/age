@@ -5,7 +5,7 @@
 #include <ncurses.h>
 
 ErrorCode Rectangle::draw(WINDOW *Board) {
-  init_pair(getID(), COLOR_BLACK, color);
+  init_pair(getID(), frontColor, backColor);
   wattron(Board, COLOR_PAIR(getID()));
   if (periodicMovement != nullptr) {
     if (periodicMovement->getPos() != 0) {

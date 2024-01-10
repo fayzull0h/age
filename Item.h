@@ -19,10 +19,10 @@ class Item {
   int id;
   static int id_counter;
  protected:
-  int color;
+  int frontColor, backColor;
   PeriodicMovement *periodicMovement;
  public:
-  Item(int x, int y, int z, int color);
+  Item(int x, int y, int z, int front, int back);
   virtual ErrorCode draw(WINDOW *Board) = 0;
   virtual int getHeight() = 0;
   virtual int getWidth() = 0;
@@ -33,7 +33,7 @@ class Item {
 
   ErrorCode tick(GameState *gs, BoardType btype);
 
-  int setColor(int c);
+  int setColors(int f, int b);
   int getX(); 
   int getY(); 
   int getZ();

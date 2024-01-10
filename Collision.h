@@ -11,34 +11,40 @@ class Collision {
   Item *it2;
  public:
   Collision(Item *i, Item *k): it1{i}, it2{k} {}
-  ErrorCode checkCollision();
+  virtual ErrorCode checkCollision() = 0;
   Item *getItem1() { return it1; }
   Item *getItem2() { return it2; }
   virtual ErrorCode collide(CollisionCode code) = 0;
   virtual ~Collision();
 };
 
-class BounceCollision: public Collision {
+class CollisionTemplate: public Collision {
  public:
-  BounceCollision(Item *k, Item *j): Collision{k, j} {}
+  CollisionTemplate(Item *it1, Item *it2): Collision{it1, it2} {}
+  ErrorCode checkCollision() override;
+};
+
+class BounceCollision: public CollisionTemplate {
+ public:
+  BounceCollision(Item *k, Item *j): CollisionTemplate{k, j} {}
   ErrorCode collide(CollisionCode code) override;
 };
 
-class StopCollision: public Collision {
+class StopCollision: public CollisionTemplate {
  public:
-  StopCollision(Item *k, Item *j): Collision{k, j} {}
+  StopCollision(Item *k, Item *j): CollisionTemplate{k, j} {}
   ErrorCode collide(CollisionCode code) override;
 };
 
-class DestroyCollision: public Collision {
+class DestroyCollision: public CollisionTemplate {
  public:
-  DestroyCollision(Item *k, Item *j): Collision{k, j} {}
+  DestroyCollision(Item *k, Item *j): CollisionTemplate{k, j} {}
   ErrorCode collide(CollisionCode code) override;
 };
 
-class WinCollision: public Collision {
+class WinCollision: public CollisionTemplate {
  public:
-  WinCollision(Item *k, Item *j): Collision{k, j} {}
+  WinCollision(Item *k, Item *j): CollisionTemplate{k, j} {}
   ErrorCode collide(CollisionCode code) override;
 };
 

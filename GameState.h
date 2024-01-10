@@ -25,6 +25,8 @@ class GameState {
   Item *getPlayer() { return player; }
   
   ErrorCode deleteItem(Item *it);
+  ErrorCode nullifyItem(Item *it);
+  ErrorCode deleteNulls();
 
   const std::vector<Status> *getStats() const { return &stats; } 
   const std::vector<Item *> *getItems() { return &items; }

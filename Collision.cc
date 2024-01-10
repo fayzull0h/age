@@ -3,25 +3,32 @@
 #include "Rectangle.h"
 #include "Single.h"
 
-ErrorCode Collision::checkCollision() {
+ErrorCode CollisionTemplate::checkCollision() {
+  if (it1->getZ() != it2->getZ()) return NoMovement;
   Rectangle *r1 = dynamic_cast<Rectangle*>(it1), *r2 = dynamic_cast<Rectangle*>(it2);
   Single *s1 = dynamic_cast<Single*>(it1), *s2 = dynamic_cast<Single*>(it2);
 
   if (r1 && r2) {
-    if ((r1->getY() < r2->getY()+r2->getHeight()) && (r1->getY()+r1->getHeight() > r2->getY())) {
+    if ((r1->getY() <= r2->getY()+r2->getHeight()-1) && (r1->getY()+r1->getHeight()-1 >= r2->getY())) {
       // r1 hits r2 from left
-      if ((r1->getXV() > 0) && (r1->getX()+r1->getWidth()+r1->getXV() >= r2->getX()) && (r1->getX()+r1->getWidth() < r2->getX()))
+      if ((r1->getXV() > 0) && (r1->getX()+r1->getWidth()-1 >= r2->getX()-1))
         return collide(FromLeft);
+      else if ((r1->getXV() < 0) && (r1->getX() <= r2->getX()+r2->getWidth()))
+        return collide(FromRight);
+
+      /*if ((r1->getXV() > 0) && (r1->getX()+r1->getWidth()+r1->getXV() >= r2->getX()) && (r1->getX()+r1->getWidth() < r2->getX()))
+        return collide(FromLeft);
+
       // r1 hits r2 from right 
       else if ((r1->getXV() < 0) && (r1->getX()+r1->getXV() <= r2->getX()+r2->getWidth() && (r1->getX() > r2->getX()+r2->getWidth())))
-        return collide(FromRight);
+        return collide(FromRight);*/
     }
-    else if ((r1->getX() < r2->getX()+r2->getWidth()) && (r1->getX()+r1->getWidth() > r2->getX())) {
+    else if ((r1->getX() <= r2->getX()+r2->getWidth()-1) && (r1->getX()+r1->getWidth()-1 >= r2->getX())) {
       // r1 hits r2 from the top
-      if ((r1->getYV() > 0) && (r1->getY()+r1->getHeight()+r1->getYV() >= r2->getY()) && (r1->getY()+r1->getHeight() < r2->getY()))
+      if ((r1->getYV() > 0) && (r1->getY()+r1->getHeight()-1 == r2->getY()-1))
         return collide(FromTop);
       // r1 hits r2 from the bottom
-      else if ((r1->getYV() < 0) && (r1->getY()+r1->getYV() <= r2->getY()+r2->getHeight() && (r1->getY() > r2->getY()+r2->getHeight())))
+      else if ((r1->getYV() < 0) && (r1->getY() == r2->getY()+r2->getHeight()))
         return collide(FromBottom);
     }
   } 
@@ -117,11 +124,11 @@ ErrorCode DestroyCollision::collide(CollisionCode code) {
     case FromLeft:
       it1->reverseXV();
       if (it2->getXV() < 0) it2->stopXV();
-      return Success;
+      break;
     case FromRight:
       it1->reverseXV();
       if (it2->getXV() > 0) it2->stopXV();
-      return Success;
+      break;
     case FromTop:
       it1->reverseYV();
       if (it2->getYV() < 0) it2->stopXV();
@@ -147,4 +154,3 @@ ErrorCode StopCollision::collide(CollisionCode code) {
 ErrorCode WinCollision::collide(CollisionCode code) {
   return GameWon;
 }
-

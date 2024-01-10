@@ -5,8 +5,8 @@
 
 int Item::id_counter = 1;
 
-Item::Item(int x, int y, int z, int color): x{x}, y{y}, z{z}, ticksOffScreen{0},
-  xvelocity{0}, yvelocity{0}, id{id_counter++}, color{color}, periodicMovement{nullptr} {}
+Item::Item(int x, int y, int z, int front, int back): x{x}, y{y}, z{z}, ticksOffScreen{0}, xvelocity{0}, 
+  yvelocity{0}, id{id_counter++}, frontColor{front}, backColor{back}, periodicMovement{nullptr} {}
 
 int Item::getX() { return x; }
 
@@ -48,23 +48,32 @@ ErrorCode Item::addZ(int i) {
 ErrorCode Item::tick(GameState *gs, BoardType btype) {
   if (ticksOffScreen > 10) return Deleted;
   if (periodicMovement) periodicMovement->move();
+  ErrorCode result = NoMovement;
 
   if (btype == Solid) {
-    if (x+xvelocity < 1 || x+xvelocity+getWidth()>79) return HorizontalWallCollision;
-    if (y+yvelocity < 1 || y+yvelocity+getHeight()>24) return VerticalWallCollision;
-  } else if (x > 1 && x < 79 && y > 1 && y < 24) ticksOffScreen = 0;
+    if (xvelocity < 0 && x+xvelocity < 1) result = LeftWallCollision;
+    else if (xvelocity > 0 && x+xvelocity+getWidth()>79) result = RightWallCollision;
+    if (yvelocity < 0 && y+yvelocity < 1) result = UpperWallCollision;
+    else if (yvelocity > 0 && y+yvelocity+getHeight()>24) result = LowerWallCollision;
+  }
   else addTick();
 
   addX(xvelocity);
   addY(yvelocity);
 
+  if (result != NoMovement) return result;
+
   std::vector<Collision *> *collisions = gs->getCollisions();
-  ErrorCode result = NoMovement;
 
   for (size_t i = 0, c = collisions->size(); i < c; ++i) {
-    ErrorCode newResult = collisions->at(i)->checkCollision();
+    ErrorCode newResult;
+    if (collisions->at(i)->getItem1() == this || collisions->at(i)->getItem2() == this) {
+      newResult = collisions->at(i)->checkCollision();
+    }
+    else continue;
+
     if (newResult == DeleteOther) {
-      gs->deleteItem(collisions->at(i)->getItem2());
+      gs->nullifyItem(collisions->at(i)->getItem2());
     } else if (result == DeleteMe) {
       gs->deleteItem(this);
     } else if (result == DeleteBoth) {
@@ -73,6 +82,7 @@ ErrorCode Item::tick(GameState *gs, BoardType btype) {
     }
     if (newResult != NoMovement) result = newResult;
   }
+  gs->deleteNulls();
 
   return result;
 }
@@ -85,4 +95,8 @@ ErrorCode Item::addTick() {
 int Item::setXV(int n) { return xvelocity = n;}
 int Item::setYV(int n) { return yvelocity = n;}
 
-int Item::setColor(int c) { return color = c; }
+int Item::setColors(int f, int b) {
+  frontColor = f;
+  backColor = b;
+  return 0;
+}

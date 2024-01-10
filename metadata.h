@@ -14,9 +14,10 @@ enum ErrorCode{
   DeleteMe = 303,
   DeleteBoth = 304,
   Collided = 305,
-  VerticalWallCollision = 306,
-  HorizontalWallCollision = 307,
-  Resize = 308,
+  LowerWallCollision = 306,
+  UpperWallCollision = 307,
+  RightWallCollision = 308,
+  LeftWallCollision = 309,
 
   /* Game Logic */
   GameStart = 400,
@@ -24,11 +25,13 @@ enum ErrorCode{
   GameExit = 402,
   GameWon = 403,
   GameLost = 404,
+  GameOver = 405,
   
   /* Failures */
   BadRequest = 500,
   InitFailure = 501,
-  DrawFailure = 502
+  DrawFailure = 502,
+  OutOfRange = 503
 };
 
 enum BoardType { Solid, View };

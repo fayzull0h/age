@@ -11,7 +11,9 @@ Engine::Engine(GameState *gs, ErrorCode (*wincheck)(GameState *), ErrorCode (*lo
   initscr();
   keypad(stdscr, true);
   noecho();
-  nodelay(stdscr, true);
+  #ifndef DEBUG
+    nodelay(stdscr, true);
+  #endif
   start_color();
   init_pair(255, COLOR_WHITE, COLOR_BLACK);
   attron(COLOR_PAIR(255));
@@ -58,7 +60,7 @@ ErrorCode Engine::go() {
     /* Draw the board and refresh the screen */
     gb->drawState(gamestate);
     refresh();
-    usleep(30000);
+    usleep(50000);
   }
 
   endwin();

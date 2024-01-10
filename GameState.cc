@@ -12,7 +12,7 @@ ErrorCode GameState::addStat(const Status &s) {
 ErrorCode GameState::addItem(Item *it) {
   if (items.size() == 0) {
     items.emplace_back(it);
-    return BadRequest;
+    return Success;
   }
 
   bool inserted = false;
@@ -36,13 +36,38 @@ ErrorCode GameState::addPlayer(Item *p) {
 }
 
 ErrorCode GameState::deleteItem(Item *it) {
-  for (size_t i = 0, c = collisions.size(); i < c; ++i) {
+  for (size_t i = collisions.size()-1, c = 0; i > c; --i) {
     if ((collisions[i]->getItem1() == it) || (collisions[i]->getItem2() == it))
       collisions.erase(collisions.begin()+i);
   }
 
-  for (size_t i = 0, c = items.size(); i < c; ++i) {
+  for (size_t i = items.size()-1, c = 0; i > c; --i) {
     if (items[i] == it) items.erase(items.begin()+i);
+  }
+  return Success;
+}
+
+ErrorCode GameState::nullifyItem(Item *it) {
+  for (size_t i = collisions.size()-1; i > 0; --i) {
+    if ((collisions[i]->getItem1() == it) || (collisions[i]->getItem2() == it)) collisions[i] = nullptr;
+  }
+
+  for (size_t i = items.size()-1; i > 0; --i) {
+    if (items[i] == it) {
+      items[i] = nullptr;
+      break;
+    }
+  }
+  return Success;
+}
+
+ErrorCode GameState::deleteNulls() {
+  for (size_t i = collisions.size()-1, c = 0; i > c; --i) {
+    if ((collisions[i] == nullptr)) collisions.erase(collisions.begin()+i);
+  }
+
+  for (size_t i = items.size()-1, c = 0; i > c; --i) {
+    if (items[i] == nullptr) items.erase(items.begin()+i);
   }
   return Success;
 }
