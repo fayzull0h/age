@@ -9,18 +9,18 @@ TARGET = snake breakout
 SOURCES = $(wildcard *.cc)
 
 # Object files have the same names as the source files, but with .o extension
-OBJECTS = $(SOURCES:%.cc=%.o)
+OBJECTS = $(SOURCES:%.cc=temps/%.o)
 
 # Default target
 all: $(TARGET)
 
 # Linking
 $(TARGET): $(OBJECTS)
-	$(CXX) $(CXXFLAGS) -o $@ $(filter-out $(TARGET:%=%.o),$^) $@.o -lncurses
+	$(CXX) $(CXXFLAGS) -o $@ $(filter-out $(TARGET:%=temps/%.o),$^) temps/$@.o -lncurses
 
 # Compiling
-%.o: %.cc
-	$(CXX) $(CXXFLAGS) -c $< -o $@
+temps/%.o: %.cc
+	$(CXX) $(CXXFLAGS) -c $< -o $@ -I../inc
 
 # Clean
 clean:
