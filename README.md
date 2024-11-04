@@ -9,6 +9,6 @@ Snake Demo: https://youtu.be/AJBTkUZnyyU
 
 To play snake:
 - clone this repository
-- cd into age
+- cd into age/src
 - make snake
 - ./snake [-l (2, 5)]
